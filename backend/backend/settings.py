@@ -234,16 +234,19 @@ AUTH_USER_MODEL = 'backapp.SpashtUser'
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://genai-next-frontend.vercel.app"
+    "https://genai-next-frontend.vercel.app", 
+    "https://django-backend1-777268942678.asia-south2.run.app"
 ]
 CORS_ALLOW_CREDENTIALS = True
-
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "https://genai-next-frontend.vercel.app",
     "https://django-backend1-777268942678.asia-south2.run.app"
 ]
-
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
 # -------------------
 # Email settings
 # -------------------

@@ -18,9 +18,11 @@ from typing import List
 from ninja.security import HttpBearer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import TokenError
+from django.views.decorators.csrf import csrf_exempt
 
 api = NinjaAPI(title="Spasht API Docs")
 
+@csrf_exempt
 @api.get("/get-gcp-token")
 def get_gcp_token(request):
     user = request.user
@@ -72,7 +74,7 @@ def send_verification_email(user):
         [user.email],
     )
 
-
+@csrf_exempt
 @api.post("/signup")
 def signup(request, data: SignupSchema):
     if not verify_recaptcha(data.recaptcha_token):
@@ -101,7 +103,7 @@ def signup(request, data: SignupSchema):
 
     return {"message": "User registered. Please check your email to verify your account."}
 
-
+@csrf_exempt
 @api.get("/verify-email/{uidb64}/{token}")
 def verify_email(request, uidb64: str, token: str):
     try:
@@ -117,13 +119,13 @@ def verify_email(request, uidb64: str, token: str):
     else:
         return api.create_response(request, {"error": "Invalid or expired token"}, status=400)
 
-
+@csrf_exempt
 @api.post("/refresh")
 def refresh(request):
     view = TokenRefreshView.as_view()
     return view(request._request)
 
-
+@csrf_exempt
 @api.post("/login", response=TokenSchema)
 def login(request, data: LoginSchema):
     if not verify_recaptcha(data.recaptcha_token):
@@ -148,7 +150,7 @@ class JWTAuth(HttpBearer):
             return user
         except TokenError:
             return None
-
+@csrf_exempt
 @api.post("/chat/save", response=ChatMessageSchema, auth=JWTAuth())
 def save_chat(request, message: str, is_bot: bool):
     chat = ChatMessage.objects.create(
@@ -157,7 +159,7 @@ def save_chat(request, message: str, is_bot: bool):
         is_bot=is_bot
     )
     return chat
-
+@csrf_exempt
 @api.get("/chat/history", response=List[ChatMessageSchema], auth=JWTAuth())
 def chat_history(request):
     chats = ChatMessage.objects.filter(user=request.user).order_by("timestamp")
